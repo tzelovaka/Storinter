@@ -56,10 +56,6 @@ bot.on('callback_query', async (ctx, next) => {
     await next()
   }
 })
-/*bot.start ( (ctx) =>
-  if (ctx.message.from.is_bot = true){
-    await ctx.telegram.kickChatMember(ctx.chat.id, ctx.message.from.id)
-  } ctx.reply(`Здравствуйте, ${ctx.message.from.first_name ? ctx.message.from.first_name : 'незнакомец'}!`))*/
 
 
 
@@ -69,7 +65,7 @@ const searchBtn = new CallbackData('searchBtn', ['number', 'name', 'action']);
 const likeBtn = new CallbackData('likeBtn', ['number', 'action']);
 
 const searchChoiceScene = new Composer()
-//0
+
 searchChoiceScene.on('text', async (ctx) => {
   try{
   ctx.wizard.state.data = {};
@@ -95,15 +91,9 @@ searchChoiceScene.on('text', async (ctx) => {
 }
 return ctx.wizard.next()
 })
-//1
 const searchScene = new Composer()
 searchScene.on('callback_query', async (ctx) => {
- // try{
-    /*let led = await ctx.reply('⏳');
-    let x = led.message_id - 2;
-    for (let i=led.message_id; i >= x; i--){
-    let del = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-    }*/
+ 
   const { number, action } = searchChoiceBtn.parse(ctx.callbackQuery.data);
   if (action != 'filter'){
     await ctx.answerCbQuery('⚠Ошибка!');
@@ -151,9 +141,7 @@ searchScene.on('callback_query', async (ctx) => {
     order: [
       ['views', 'DESC']
     ]
-  })/*.then((story) => {
-    console.log("Story:", JSON.stringify(story, null, 2));
-  });*/
+  })
   let x = count - 1
   for (let u = 0; u <= 4 && u<=x; u++){
     const cou = await like.count({where:{
@@ -178,12 +166,8 @@ searchScene.on('callback_query', async (ctx) => {
       break;
   }
   return ctx.scene.leave()
-/*} catch(e){
-  await ctx.reply('⚠Ошибка!');
-  return ctx.scene.leave()
-}*/
+
 })
-//2
 const choiceScene = new Composer()
 choiceScene.on('text', async (ctx) => {
   try{
@@ -218,7 +202,6 @@ choiceScene.on('text', async (ctx) => {
 }
 return ctx.wizard.selectStep(4)
 })
-//3
 const numberScene = new Composer()
 numberScene.on('text', async (ctx) => {
   try{
@@ -253,7 +236,6 @@ numberScene.on('text', async (ctx) => {
 }
 return ctx.wizard.next()
 })
-//4
 const readScene = new Composer()
 readScene.on('callback_query', async (ctx) => {
   try{
@@ -262,24 +244,7 @@ readScene.on('callback_query', async (ctx) => {
       await ctx.answerCbQuery('⚠Ошибка!');
       return ctx.scene.leave()
     }
-    /*if (action === 'storyreadname'){
-      const {count, rows} = await story.findAndCountAll({where:{
-        name: ctx.wizard.state.data.choiceScene,
-        release: true,
-      }})
-    let led = await ctx.reply('⏳');
-    let x = led.message_id - count;
-    for (let i=led.message_id; i >= x; i--){
-    let del = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-    }
-    }
-    if (action === 'storyreadnumber'){
-    let led = await ctx.reply('⏳');
-    let x = led.message_id - 2;
-    for (let i=led.message_id; i > x; i--){
-    let del = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-    }
-    }*/
+    
     await story.increment({ views: 1}, {
       where: {
         id: number
@@ -311,7 +276,6 @@ readScene.on('callback_query', async (ctx) => {
 return ctx.wizard.next()
 })
 
-//5
 const readSceneTrue = new Composer()
 readSceneTrue.on('callback_query', async (ctx) => {
   try{
@@ -319,13 +283,7 @@ readSceneTrue.on('callback_query', async (ctx) => {
     const { number, name, action } = searchBtn.parse(ctx.callbackQuery.data);
 
     ctx.wizard.state.data.readSceneTrue = number;
-    /*if (number < 1){
-    let led = await ctx.reply('⏳');
-    let x = led.message_id - 2;
-    for (let i=led.message_id; i > x; i--){
-    let del = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-    }
-    }*/
+    
     if (action != `storyreadtrue${ctx.wizard.state.data.readScene}`){
       await ctx.reply('⚠Ошибка!');
       return ctx.scene.leave()
@@ -344,16 +302,7 @@ readSceneTrue.on('callback_query', async (ctx) => {
         storyblId: r.storyblId,
         storyId: ctx.wizard.state.data.readScene
       }})
-      /*let time = await ctx.reply ('⏳')
-      let x = time.message_id - count
-      for(let i = time.message_id; i >= x; i--) {
-        try {
-          let res = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-          console.log(res);
-      } catch (e) {
-          console.error(e);
-      }
-      }*/
+      
       await ctx.reply (`${r.smile} ${r.link}`)
     }
   const row = await storybl.findOne({where: {
@@ -425,20 +374,10 @@ else {
 }
 return ctx.wizard.selectStep(5)
 })
-//6
 const likeScene = new Composer()
 likeScene.on('callback_query', async (ctx) => {
   try{
-    /*let time = await ctx.reply ('⏳')
-      let x = time.message_id - 2
-      for(let i = time.message_id; i > x; i--) {
-        try {
-          let res = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-          console.log(res);
-      } catch (e) {
-          console.error(e);
-      }
-      }*/
+    
   await ctx.replyWithHTML (`🔚Прохождение истории окончено:
   /start - главное меню
   /myprofile - мой профиль`)
@@ -543,16 +482,7 @@ profileScene.action('mystory', async (ctx) => {
     authId: ctx.callbackQuery.from.id,
     release: true,
   }})
-  /*let time = await ctx.reply ('⏳')
-      let k = time.message_id - count-1
-      for(let i = time.message_id; i >= k; i--) {
-        try {
-          let res = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-          console.log(res);
-      } catch (e) {
-          console.error(e);
-      }
-      }*/
+ 
   if (count < 1) {
     await ctx.answerCbQuery('⚠Для этой функции требуется опубликовать историю!');
     return ctx.scene.leave();
@@ -591,16 +521,6 @@ profileScene.action(profileBtn.filter({action: 'deletestory'}), async (ctx) => {
     id: `${number}`,
     release: true
   }})
-/*let time = await ctx.reply ('⏳')
-      let k = time.message_id - count
-      for(let i = time.message_id; i >= k; i--) {
-        try {
-          let res = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-          console.log(res);
-      } catch (e) {
-          console.error(e);
-      }
-      }*/
   await story.destroy({
     where:{
       id: `${number}`,
@@ -642,16 +562,6 @@ profileScene.action('likedstory', async (ctx) => {
   const {count, rows} = await like.findAndCountAll({where:{
     authId: ctx.callbackQuery.from.id,
   }})
-  /*let time = await ctx.reply ('⏳')
-      let k = time.message_id - 1
-      for(let i = time.message_id; i >= k; i--) {
-        try {
-          let res = await ctx.telegram.deleteMessage(ctx.chat.id, i);
-          console.log(res);
-      } catch (e) {
-          console.error(e);
-      }
-      }*/
     if (count<1) {
       await ctx.answerCbQuery('⚠Для этой функции требуется лайкнуть историю!');
       return ctx.scene.leave();
@@ -677,19 +587,13 @@ profileScene.action('likedstory', async (ctx) => {
 });
 
 profileScene.use(async (ctx) =>{ 
-//await ctx.answerCbQuery('⚠Ошибка!')
 return ctx.scene.leave()});
 
 const stagep = new Scenes.Stage([profileScene])
 bot.use(session())
 bot.use(stagep.middleware())
-//bot.action('profilee', Scenes.Stage.enter('profile'));
+
 bot.command('myprofile', (ctx) => ctx.scene.enter('profile'))
-/*bot.help(async (ctx) => await ctx.reply('Тест', Markup.inlineKeyboard(
-  [
-    [Markup.button.callback('Профиль', 'profilee')
-    ]
-    ])))*/
 
 bot.launch()
 
